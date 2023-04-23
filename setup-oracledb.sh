@@ -144,7 +144,8 @@ fi
 echo "::group::🐳 Running Docker"
 CMD="docker run -d ${DOCKER_ARGS} ${DOCKER_IMAGE}"
 echo "${CMD}"
-OUTPUT=$($CMD)
+# Run Docker container
+eval ${CMD}
 echo "::endgroup::"
 ###############################################################################
 
