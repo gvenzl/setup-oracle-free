@@ -73,7 +73,7 @@ runs:
     - name: Setup database
       shell: bash
       if: inputs.image == ''
-      run: sh "${{ github.action_path }}/setup-oracledb.sh"
+      run: "${{ github.action_path }}/setup-oracledb.sh"
       env:
         SETUP_TAG: ${{ inputs.tag }}
         SETUP_PORT: ${{ inputs.port }}
