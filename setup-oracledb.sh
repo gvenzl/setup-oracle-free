@@ -66,8 +66,8 @@ if [ -n "${SETUP_HEALTH_INTERVAL}" ]; then
     echo "✅ health interval set to ${SETUP_HEALTH_INTERVAL}"
     HEALTH_INTERVAL=$SETUP_HEALTH_INTERVAL
 else
-    echo "☑️️ health interval set to 5 (default)"
-    HEALTH_INTERVAL=5
+    echo "☑️️ health interval set to 10 (default)"
+    HEALTH_INTERVAL=10
 fi
 
 # VOLUME
