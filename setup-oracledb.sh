@@ -58,18 +58,12 @@ DOCKER_ARGS="${DOCKER_ARGS} --name ${CONTAINER_NAME}"
 if [ -n "${SETUP_HEALTH_MAX_RETRIES}" ]; then
     echo "✅ health max retries set to ${SETUP_HEALTH_MAX_RETRIES}"
     HEALTH_MAX_RETRIES=$SETUP_HEALTH_MAX_RETRIES
-else
-    echo "✅ health max retries set to 10"
-    HEALTH_MAX_RETRIES=10
 fi
 
 # HEALTH_INTERVAL
 if [ -n "${SETUP_HEALTH_INTERVAL}" ]; then
     echo "✅ health interval set to ${SETUP_HEALTH_INTERVAL}"
     HEALTH_INTERVAL=$SETUP_HEALTH_INTERVAL
-else
-    echo "✅ health interval set to 10"
-    HEALTH_INTERVAL=10
 fi
 
 # VOLUME
