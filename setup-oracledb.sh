@@ -19,10 +19,8 @@
 ORADATA="/opt/oracle/oradata"
 DEFAULT_CONTAINER_NAME="oracledb"
 
-# Wait a total of 2 mins (3s x 40 = 120s) for container startup
-HEALTH_MAX_RETRIES=40
-# Smaller intervals means tests can start sooner
-HEALTH_INTERVAL=3
+HEALTH_MAX_RETRIES=0
+HEALTH_INTERVAL=0
 
 DOCKER_ARGS=""
 DOCKER_IMAGE=""
@@ -49,7 +47,7 @@ if [ -n "${SETUP_CONTAINER_NAME}" ]; then
     echo "✅ container name set to ${SETUP_CONTAINER_NAME}"
     CONTAINER_NAME=${SETUP_CONTAINER_NAME}
 else
-    echo "✅ container name set to ${DEFAULT_CONTAINER_NAME}"
+    echo "☑️️ container name set to ${DEFAULT_CONTAINER_NAME} (default)"
     CONTAINER_NAME=${DEFAULT_CONTAINER_NAME}
 fi
 DOCKER_ARGS="${DOCKER_ARGS} --name ${CONTAINER_NAME}"
@@ -58,12 +56,18 @@ DOCKER_ARGS="${DOCKER_ARGS} --name ${CONTAINER_NAME}"
 if [ -n "${SETUP_HEALTH_MAX_RETRIES}" ]; then
     echo "✅ health max retries set to ${SETUP_HEALTH_MAX_RETRIES}"
     HEALTH_MAX_RETRIES=$SETUP_HEALTH_MAX_RETRIES
+else
+    echo "☑️️ health max retries set to 25 (default)"
+    HEALTH_MAX_RETRIES=25
 fi
 
 # HEALTH_INTERVAL
 if [ -n "${SETUP_HEALTH_INTERVAL}" ]; then
     echo "✅ health interval set to ${SETUP_HEALTH_INTERVAL}"
     HEALTH_INTERVAL=$SETUP_HEALTH_INTERVAL
+else
+    echo "☑️️ health interval set to 5 (default)"
+    HEALTH_INTERVAL=5
 fi
 
 # VOLUME
