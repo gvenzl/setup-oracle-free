@@ -64,7 +64,7 @@ fi
 # HEALTH_INTERVAL
 if [ -n "${SETUP_HEALTH_INTERVAL}" ]; then
     echo "✅ health interval set to ${SETUP_HEALTH_INTERVAL}"
-    HEALTH_INTERVAL=$SETUP_HEALTH_INTERVAL
+    HEALTH_INTERVAL=${SETUP_HEALTH_INTERVAL}
 else
     echo "☑️️ health interval set to 10 (default)"
     HEALTH_INTERVAL=10
@@ -79,7 +79,7 @@ if [ -n "${SETUP_VOLUME}" ]; then
     else
         echo "✅ volume set to ${SETUP_VOLUME} mapped to ${ORADATA}"
         DOCKER_ARGS="${DOCKER_ARGS} -v ${SETUP_VOLUME}:${ORADATA}"
-        chmod 777 ${SETUP_VOLUME}
+        chmod 777 "${SETUP_VOLUME}"
     fi
 fi
 
@@ -143,22 +143,20 @@ fi
 ###############################################################################
 echo "::group::🐳 Running Docker"
 CMD="docker run -d ${DOCKER_ARGS} ${DOCKER_IMAGE}"
-echo $CMD
+echo "${CMD}"
 OUTPUT=$($CMD)
 echo "::endgroup::"
 ###############################################################################
 
 ###############################################################################
 echo "::group::⏰ Waiting for database to be ready"
-COUNTER=0
 DB_IS_UP=1
 EXIT_VALUE=0
 
-while [ $COUNTER -lt $HEALTH_MAX_RETRIES ]
+for ((COUNTER=1; COUNTER <= HEALTH_MAX_RETRIES; COUNTER++))
 do
-    COUNTER=$(( $COUNTER + 1 ))
     echo "  - try #$COUNTER"
-    sleep $HEALTH_INTERVAL
+    sleep "${HEALTH_INTERVAL}"
     DB_IS_UP=$(docker exec "${CONTAINER_NAME}" healthcheck.sh && echo "yes" || echo "no")
     if [ "${DB_IS_UP}" = "yes" ]; then
         break
@@ -174,4 +172,4 @@ fi
 
 echo "::endgroup::"
 ###############################################################################
-exit $EXIT_VALUE
+exit ${EXIT_VALUE}
