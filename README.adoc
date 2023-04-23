@@ -1,0 +1,199 @@
+= Setup Oracle Database
+:linkattrs:
+:project-owner: gvenzl
+:project-name:  setup-oracledb-free
+:project-tag:   v1
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+image:https://img.shields.io/github/v/release/{project-owner}/{project-name}["GitHub release", link="https://github.com/jreleaser/release-action/releases"]
+
+Sets up Oracle Database using container images from link:https://github.com/gvenzl/oci-oracle-free[gvenzl/oci-oracle-free].
+
+IMPORTANT: Only *Linux* runners are supported for the time being.
+
+== Inputs
+
+Following inputs may be used as `step.with` keys:
+
+[%header,cols="<2,<,<,<3",width="100%"]
+|===
+| Name               | Required | Default  | Description
+| tag                |          | latest   | Valid image tag from link:https://github.com/gvenzl/oci-oracle-free[gvenzl/oci-oracle-free]
+| port               |          | 1521     | Exposed port for database connections
+| volume             |          |          | Volume to be mounted to contain database files
+| oracle-password    |          |          | Password for the Oracle Database `SYS` and `SYSTEM` users
+| oracle-database    |          |          | Create a new pluggable database with the specified name
+| app-user           | true     |          | Create a new database schema user with the specified name
+| app-user-password  | true     |          | Define a password for the database schema user specified by `app-user`
+| setup-scripts      |          |          | Path to folder with additional database setup scripts
+| startup-scripts    |          |          | Path to folder with additional database startup scripts
+| container-name     |          | oracledb | Name for the database container
+| health-max-retries |          | 20       | Number of tries for checking that the database is up
+| health-interval    |          | 10       | Time interval between health checks, in seconds
+|===
+
+A random password will be generated automatically if a value for `oracle-password` is not supplied.
+
+== Usage
+
+=== Basic usage
+
+All defaults enabled as explained link:https://github.com/gvenzl/oci-oracle-free#github-actions[here].
+
+[source,yaml]
+[subs="attributes"]
+----
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: {project-owner}/{project-name}@{project-tag}
+        with:
+          app-user: &lt;username&gt;
+          app-user-password: &lt;password&gt;
+----
+
+NOTE: You must define values of `app-user` and `app-user-password`, either explicitly, via env vars, or secrets.
+
+=== Custom Database Password
+
+Set a custom database password that you may use at a later step to perform admin operations.
+
+[source,yaml]
+[subs="attributes"]
+----
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: {project-owner}/{project-name}@{project-tag}
+        with:
+          app-user: &lt;username&gt;
+          app-user-password: &lt;password&gt;
+          oracle-password: ${{ secrets.ORACLE_PASSWORD }}
+----
+
+NOTE: Use a secret or explicitly mask the password before using it.
+
+=== Persistent Database Container
+
+Database files placed at `~/database-files` inside the GitHub Action runner will be read and used. You may choose a different location according to your needs.
+
+[source,yaml]
+[subs="attributes"]
+----
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: mkdir ${{ github.workspace }}/database-files
+      - uses: {project-owner}/{project-name}@{project-tag}
+        with:
+          app-user: &lt;username&gt;
+          app-user-password: &lt;password&gt;
+          volume: ${{ github.workspace }}/database-files
+----
+
+NOTE: The directory `~/database-files` must be writtable by the `oracle` (uid: 54321) user.
+
+=== Init scripts
+
+SQL scripts placed at `~/my-scripts` inside the GitHub Action runner will be used to post initialize the database.
+
+[source,yaml]
+[subs="attributes"]
+----
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: {project-owner}/{project-name}@{project-tag}
+        with:
+          app-user: &lt;username&gt;
+          app-user-password: &lt;password&gt;
+          startup-scripts: ${{ github.workspace }}/my-scripts
+----
+
+== Why
+
+The documentation from link:https://github.com/gvenzl/oci-oracle-free[gvenzl/oci-oracle-free] shows that GitHub services may
+be used with the images. An example is shown next:
+
+[source, yaml]
+----
+    services:
+      # Oracle service (label used to access the service container)
+      oracle:
+        # Docker Hub image (feel free to change the tag "latest" to any other available one)
+        image: gvenzl/oracle-free:latest
+
+        # Provide passwords and other environment variables to container
+        env:
+          ORACLE_RANDOM_PASSWORD: true
+          APP_USER: my_user
+          APP_USER_PASSWORD: my_password_which_I_really_should_change
+
+        # Forward Oracle port
+        ports:
+          - 1521:1521
+
+        # Provide healthcheck script options for startup
+        options: >-
+          --health-cmd healthcheck.sh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+----
+
+This action builds on top of the capabilities offered by `gvenzl/oci-oracle-free` adding the following options:
+
+ - managed docker image name & tag
+ - managed database port
+ - automatic mapping of database volume path (mapped to `/opt/oracle/oradata`)
+ - automatic mapping of external database initialization scripts
+ - automatic health checks upon starting the container
+
+Thus, switching from container service to action results in the following configuration:
+
+[source,yaml]
+[subs="attributes"]
+----
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: {project-owner}/{project-name}@{project-tag}
+        with:
+          app-user: my_user
+          app-user-password: my_password_which_I_really_should_change
+----
+
+Updating this configuration to persist the database volume between runs:
+
+[source,yaml]
+[subs="attributes"]
+----
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: mkdir ${{ github.workspace }}/database-files
+      - uses: {project-owner}/{project-name}@{project-tag}
+        with:
+          app-user: my_user
+          app-user-password: my_password_which_I_really_should_change
+          volume: ${{ github.workspace }}/database-files
+----
