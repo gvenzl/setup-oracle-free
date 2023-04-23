@@ -57,8 +57,9 @@ if [ -n "${SETUP_HEALTH_MAX_RETRIES}" ]; then
     echo "✅ health max retries set to ${SETUP_HEALTH_MAX_RETRIES}"
     HEALTH_MAX_RETRIES=$SETUP_HEALTH_MAX_RETRIES
 else
-    echo "☑️️ health max retries set to 25 (default)"
-    HEALTH_MAX_RETRIES=25
+    # Set default if scripts is invoked outside the GH Action (otherwise this is set in action.yml)
+    echo "☑️️ health max retries set to 20 (default)"
+    HEALTH_MAX_RETRIES=20
 fi
 
 # HEALTH_INTERVAL
@@ -66,6 +67,7 @@ if [ -n "${SETUP_HEALTH_INTERVAL}" ]; then
     echo "✅ health interval set to ${SETUP_HEALTH_INTERVAL}"
     HEALTH_INTERVAL=${SETUP_HEALTH_INTERVAL}
 else
+    # Set default if scripts is invoked outside the GH Action (otherwise this is set in action.yml)
     echo "☑️️ health interval set to 10 (default)"
     HEALTH_INTERVAL=10
 fi
