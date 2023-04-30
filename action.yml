@@ -17,6 +17,11 @@ inputs:
     default: '1521'
     required: false
 
+  container-runtime:
+    description: 'Container runtime to use (docker or podman).'
+    default: 'podman'
+    required: false
+
   container-name:
     description: 'Name for the container'
     default: 'oracledb'
@@ -24,12 +29,12 @@ inputs:
 
   health-max-retries:
     description: 'Number of tries for checking database is up'
-    default: '20'
+    default: '60'
     required: false
 
   health-interval:
     description: 'Time interval between health checks, in seconds'
-    default: '10'
+    default: '3'
     required: false
 
   volume:
@@ -73,10 +78,11 @@ runs:
     - name: Setup database
       shell: bash
       if: inputs.image == ''
-      run: sh "${{ github.action_path }}/setup-oracledb.sh"
+      run: "${{ github.action_path }}/setup-oracledb.sh"
       env:
         SETUP_TAG: ${{ inputs.tag }}
         SETUP_PORT: ${{ inputs.port }}
+        SETUP_CONTAINER_RUNTIME: ${{ inputs.container-runtime }}
         SETUP_CONTAINER_NAME: ${{ inputs.container-name }}
         SETUP_HEALTH_MAX_RETRIES: ${{ inputs.health-max-retries }}
         SETUP_HEALTH_INTERVAL: ${{ inputs.health-interval }}
