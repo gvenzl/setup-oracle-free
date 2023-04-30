@@ -12,7 +12,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-image:https://img.shields.io/github/v/release/{project-owner}/{project-name}["GitHub release", link="https://github.com/jreleaser/release-action/releases"]
+image:https://img.shields.io/github/v/release/{project-owner}/{project-name}["GitHub release", link="https://github.com/gvenzl/setup-oracle-free/releases"]
 
 Sets up Oracle Database using container images from link:https://github.com/gvenzl/oci-oracle-free[gvenzl/oci-oracle-free].
 
