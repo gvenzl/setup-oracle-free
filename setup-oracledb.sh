@@ -144,7 +144,7 @@ fi
 
 ###############################################################################
 echo "::group::🐳 Running Docker"
-CMD="docker run -d ${DOCKER_ARGS} ${DOCKER_IMAGE}"
+CMD="podman run -d ${DOCKER_ARGS} ${DOCKER_IMAGE}"
 echo "${CMD}"
 # Run Docker container
 eval ${CMD}
