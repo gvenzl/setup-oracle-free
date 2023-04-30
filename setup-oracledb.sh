@@ -167,8 +167,8 @@ if [ -z "${VALIDATION}" ]; then
 fi
 
 ###############################################################################
-echo "::group::🐳 Running Docker"
-CMD="podman run -d ${CONTAINER_ARGS} ${CONTAINER_IMAGE}"
+echo "::group::🐳 Running Container"
+CMD="${CONTAINER_RUNTIME} run -d ${CONTAINER_ARGS} ${CONTAINER_IMAGE}"
 echo "${CMD}"
 # Run Docker container
 eval "${CMD}"
@@ -184,7 +184,7 @@ for ((COUNTER=1; COUNTER <= HEALTH_MAX_RETRIES; COUNTER++))
 do
     echo "  - try #$COUNTER"
     sleep "${HEALTH_INTERVAL}"
-    DB_IS_UP=$(podman exec "${CONTAINER_NAME}" healthcheck.sh && echo "yes" || echo "no")
+    DB_IS_UP=$("${CONTAINER_RUNTIME}" exec "${CONTAINER_NAME}" healthcheck.sh && echo "yes" || echo "no")
     if [ "${DB_IS_UP}" = "yes" ]; then
         break
     fi
