@@ -160,7 +160,7 @@ for ((COUNTER=1; COUNTER <= HEALTH_MAX_RETRIES; COUNTER++))
 do
     echo "  - try #$COUNTER"
     sleep "${HEALTH_INTERVAL}"
-    DB_IS_UP=$(docker exec "${CONTAINER_NAME}" healthcheck.sh && echo "yes" || echo "no")
+    DB_IS_UP=$(podman exec "${CONTAINER_NAME}" healthcheck.sh && echo "yes" || echo "no")
     if [ "${DB_IS_UP}" = "yes" ]; then
         break
     fi
