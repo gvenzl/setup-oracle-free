@@ -82,8 +82,8 @@ if [ -n "${SETUP_HEALTH_MAX_RETRIES}" ]; then
     HEALTH_MAX_RETRIES=$SETUP_HEALTH_MAX_RETRIES
 else
     # Set default if scripts is invoked outside the GH Action (otherwise this is set in action.yml)
-    echo "☑️️ health max retries set to 20 (default)"
-    HEALTH_MAX_RETRIES=20
+    echo "☑️️ health max retries set to 60 (default)"
+    HEALTH_MAX_RETRIES=60
 fi
 
 # HEALTH_INTERVAL
@@ -92,8 +92,8 @@ if [ -n "${SETUP_HEALTH_INTERVAL}" ]; then
     HEALTH_INTERVAL=${SETUP_HEALTH_INTERVAL}
 else
     # Set default if scripts is invoked outside the GH Action (otherwise this is set in action.yml)
-    echo "☑️️ health interval set to 10 (default)"
-    HEALTH_INTERVAL=10
+    echo "☑️️ health interval set to 3 (default)"
+    HEALTH_INTERVAL=3
 fi
 
 # VOLUME
@@ -182,7 +182,7 @@ EXIT_VALUE=0
 
 for ((COUNTER=1; COUNTER <= HEALTH_MAX_RETRIES; COUNTER++))
 do
-    echo "  - try #$COUNTER"
+    echo "  - try #${COUNTER} of ${HEALTH_MAX_RETRIES}"
     sleep "${HEALTH_INTERVAL}"
     DB_IS_UP=$("${CONTAINER_RUNTIME}" exec "${CONTAINER_NAME}" healthcheck.sh && echo "yes" || echo "no")
     if [ "${DB_IS_UP}" = "yes" ]; then
