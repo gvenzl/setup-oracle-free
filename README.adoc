@@ -1,7 +1,7 @@
 = Setup Oracle Database
 :linkattrs:
 :project-owner: gvenzl
-:project-name:  setup-oracledb-free
+:project-name:  setup-oracle-free
 :project-tag:   v1
 
 ifdef::env-github[]
