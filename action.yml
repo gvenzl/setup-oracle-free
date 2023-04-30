@@ -72,13 +72,13 @@ runs:
       if: runner.os != 'Linux'
       shell: bash
       run: |
-        echo '::error:: Only Linux runners are supported at the moment'
+        echo "::error:: Only Linux runners are supported at the moment"
         exit 1
 
     - name: Setup database
       shell: bash
       if: inputs.image == ''
-      run: '${{ github.action_path }}/setup-oracledb.sh'
+      run: "${{ github.action_path }}/setup-oracledb.sh"
       env:
         SETUP_TAG: ${{ inputs.tag }}
         SETUP_PORT: ${{ inputs.port }}
