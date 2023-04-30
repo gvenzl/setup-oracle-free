@@ -37,6 +37,7 @@ Following inputs may be used as `step.with` keys:
 | container-name     |          | oracledb | Name for the database container
 | health-max-retries |          | 20       | Number of tries for checking that the database is up
 | health-interval    |          | 10       | Time interval between health checks, in seconds
+| container-runtime  |          | podman   | The container runtime to use (`podman` or `docker`)
 |===
 
 A random password will be generated automatically if a value for `oracle-password` is not supplied.

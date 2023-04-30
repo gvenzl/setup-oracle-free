@@ -22,8 +22,9 @@ DEFAULT_CONTAINER_NAME="oracledb"
 HEALTH_MAX_RETRIES=0
 HEALTH_INTERVAL=0
 
-DOCKER_ARGS=""
-DOCKER_IMAGE=""
+CONTAINER_RUNTIME=""
+CONTAINER_ARGS=""
+CONTAINER_IMAGE=""
 CONTAINER_NAME=""
 VALIDATION="OK"
 FASTSTART=""
@@ -31,16 +32,39 @@ FASTSTART=""
 ###############################################################################
 echo "::group::🔍 Verifying inputs"
 
+# CONTAINER_RUNTIME
+# If the setup container runtime is set, verify the runtime is available
+if [ -n "${SETUP_CONTAINER_RUNTIME}" ]; then
+    # Container runtime exists
+    if type "${SETUP_CONTAINER_RUNTIME}" > /dev/null; then
+        CONTAINER_RUNTIME="${SETUP_CONTAINER_RUNTIME}"
+        echo "✅ container runtime set to ${CONTAINER_RUNTIME}"
+    fi
+fi
+# If container runtime is empty (either doesn't exist, or wasn't passed on), find default
+if [ -z "${CONTAINER_RUNTIME}" ]; then
+  if type podman > /dev/null; then
+      CONTAINER_RUNTIME="podman"
+      echo "☑️️ container runtime set to ${CONTAINER_RUNTIME} (default)"
+  elif type docker > /dev/null; then
+      CONTAINER_RUNTIME="docker"
+      echo "☑️️ container runtime set to ${CONTAINER_RUNTIME} (default)"
+  else
+      echo "❌ container runtime not available."
+      VALIDATION=""
+  fi
+fi
+
 # TAG
 if [ -z "${SETUP_TAG}" ]; then
     SETUP_TAG="latest"
 fi
 echo "✅ tag set to ${SETUP_TAG}"
-DOCKER_IMAGE="gvenzl/oracle-free:${SETUP_TAG}"
+CONTAINER_IMAGE="gvenzl/oracle-free:${SETUP_TAG}"
 
 # PORT
 echo "✅ port set to ${SETUP_PORT}"
-DOCKER_ARGS="-p 1521:${SETUP_PORT}"
+CONTAINER_ARGS="-p 1521:${SETUP_PORT}"
 
 # CONTAINER_NAME
 if [ -n "${SETUP_CONTAINER_NAME}" ]; then
@@ -50,7 +74,7 @@ else
     echo "☑️️ container name set to ${DEFAULT_CONTAINER_NAME} (default)"
     CONTAINER_NAME=${DEFAULT_CONTAINER_NAME}
 fi
-DOCKER_ARGS="${DOCKER_ARGS} --name ${CONTAINER_NAME}"
+CONTAINER_ARGS="${CONTAINER_ARGS} --name ${CONTAINER_NAME}"
 
 # HEALTH_MAX_RETRIES
 if [ -n "${SETUP_HEALTH_MAX_RETRIES}" ]; then
@@ -80,7 +104,7 @@ if [ -n "${SETUP_VOLUME}" ]; then
         echo "⚠️ Volume ${SETUP_VOLUME} skipped because tag is ${SETUP_TAG}"
     else
         echo "✅ volume set to ${SETUP_VOLUME} mapped to ${ORADATA}"
-        DOCKER_ARGS="${DOCKER_ARGS} -v ${SETUP_VOLUME}:${ORADATA}"
+        CONTAINER_ARGS="${CONTAINER_ARGS} -v ${SETUP_VOLUME}:${ORADATA}"
         chmod 777 "${SETUP_VOLUME}"
     fi
 fi
@@ -88,22 +112,22 @@ fi
 # PASSWORD
 if [ -z "${SETUP_ORACLE_PASSWORD}" ]; then
     echo "⚠️ Oracle password will be randomly generated"
-    DOCKER_ARGS="${DOCKER_ARGS} -e ORACLE_RANDOM_PASSWORD=true"
+    CONTAINER_ARGS="${CONTAINER_ARGS} -e ORACLE_RANDOM_PASSWORD=true"
 else
     echo "✅ ORACLE_PASSWORD explicitly set"
-    DOCKER_ARGS="${DOCKER_ARGS} -e ORACLE_PASSWORD=${SETUP_ORACLE_PASSWORD}"
+    CONTAINER_ARGS="${CONTAINER_ARGS} -e ORACLE_PASSWORD=${SETUP_ORACLE_PASSWORD}"
 fi
 
 # DATABASE
 if [ -n "${SETUP_ORACLE_DATABASE}" ]; then
     echo "✅ database name set to ${SETUP_ORACLE_DATABASE}"
-    DOCKER_ARGS="${DOCKER_ARGS} -e ORACLE_DATABASE=${SETUP_ORACLE_DATABASE}"
+    CONTAINER_ARGS="${CONTAINER_ARGS} -e ORACLE_DATABASE=${SETUP_ORACLE_DATABASE}"
 fi
 
 # APP_USER
 if [ -n "${SETUP_APP_USER}" ]; then
     echo "✅ APP_USER explicitly set"
-    DOCKER_ARGS="${DOCKER_ARGS} -e APP_USER=${SETUP_APP_USER}"
+    CONTAINER_ARGS="${CONTAINER_ARGS} -e APP_USER=${SETUP_APP_USER}"
 else
     echo "❌ APP_USER is not set"
     VALIDATION=""
@@ -112,7 +136,7 @@ fi
 # APP_USER_PASSWORD
 if [ -n "${SETUP_APP_USER_PASSWORD}" ]; then
     echo "✅ APP_USER_PASSWORD explicitly set"
-    DOCKER_ARGS="${DOCKER_ARGS} -e APP_USER_PASSWORD=${SETUP_APP_USER_PASSWORD}"
+    CONTAINER_ARGS="${CONTAINER_ARGS} -e APP_USER_PASSWORD=${SETUP_APP_USER_PASSWORD}"
 else
     echo "❌ APP_USER_PASSWORD is not set"
     VALIDATION=""
@@ -121,13 +145,13 @@ fi
 # SETUP_SCRIPTS
 if [ -n "${SETUP_SETUP_SCRIPTS}" ]; then
     echo "✅ setup scripts from ${SETUP_SETUP_SCRIPTS}"
-    DOCKER_ARGS="${DOCKER_ARGS} -v ${SETUP_SETUP_SCRIPTS}:/container-entrypoint-initdb.d"
+    CONTAINER_ARGS="${CONTAINER_ARGS} -v ${SETUP_SETUP_SCRIPTS}:/container-entrypoint-initdb.d"
 fi
 
 # STARTUP_SCRIPTS
 if [ -n "${SETUP_STARTUP_SCRIPTS}" ]; then
     echo "✅ startup scripts from ${SETUP_STARTUP_SCRIPTS}"
-    DOCKER_ARGS="${DOCKER_ARGS} -v ${SETUP_STARTUP_SCRIPTS}:/container-entrypoint-startdb.d"
+    CONTAINER_ARGS="${CONTAINER_ARGS} -v ${SETUP_STARTUP_SCRIPTS}:/container-entrypoint-startdb.d"
 fi
 
 if [ -n "${VALIDATION}" ]; then
@@ -144,10 +168,10 @@ fi
 
 ###############################################################################
 echo "::group::🐳 Running Docker"
-CMD="podman run -d ${DOCKER_ARGS} ${DOCKER_IMAGE}"
+CMD="podman run -d ${CONTAINER_ARGS} ${CONTAINER_IMAGE}"
 echo "${CMD}"
 # Run Docker container
-eval ${CMD}
+eval "${CMD}"
 echo "::endgroup::"
 ###############################################################################
 
