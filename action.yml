@@ -1,6 +1,6 @@
-name: Oracle-DB
+name: Setup-Oracle-DB-Free
 
-description: 'Setup Oracle Database Free on Docker'
+description: 'Setup Oracle Database Free on Docker or Podman.'
 
 branding:
   icon: 'database'
