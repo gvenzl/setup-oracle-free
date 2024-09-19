@@ -55,7 +55,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: {project-owner}/{project-name}@{project-tag}
         with:
           app-user: &lt;username&gt;
@@ -75,7 +75,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: {project-owner}/{project-name}@{project-tag}
         with:
           app-user: &lt;username&gt;
@@ -96,7 +96,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: mkdir ${{ github.workspace }}/database-files
       - uses: {project-owner}/{project-name}@{project-tag}
         with:
@@ -118,7 +118,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: {project-owner}/{project-name}@{project-tag}
         with:
           app-user: &lt;username&gt;
@@ -174,7 +174,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: {project-owner}/{project-name}@{project-tag}
         with:
           app-user: my_user
@@ -190,7 +190,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: mkdir ${{ github.workspace }}/database-files
       - uses: {project-owner}/{project-name}@{project-tag}
         with:
