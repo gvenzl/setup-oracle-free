@@ -2,7 +2,7 @@
 # Since: January, 2023
 # Author: aalmiray, gvenzl
 #
-# Copyright 2023 Andres Almiray, Gerald Venzl
+# Copyright 2023-2024 Andres Almiray, Gerald Venzl
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
