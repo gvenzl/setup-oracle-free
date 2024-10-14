@@ -196,12 +196,11 @@ done
 
 echo "::endgroup::"
 # Start a new group so that database readiness or failure is visible in actions.
-echo "::group::"
 
 if [ "${DB_IS_UP}" = "yes" ]; then
-    echo "✅ Database is ready!"
+    echo "::group::✅ Database is ready!"
 else
-    echo "❌ Database failed to start on time."
+    echo "::group::❌ Database failed to start on time."
     echo "🔎 Container logs:"
     "${CONTAINER_RUNTIME}" logs "${CONTAINER_NAME}"
     EXIT_VALUE=1
