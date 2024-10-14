@@ -194,6 +194,10 @@ do
     fi
 done
 
+echo "::endgroup::"
+# Start a new group so that database readiness or failure is visible in actions.
+echo "::group::"
+
 if [ "${DB_IS_UP}" = "yes" ]; then
     echo "✅ Database is ready!"
 else
