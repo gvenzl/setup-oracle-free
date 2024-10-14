@@ -51,4 +51,4 @@ jobs:
           export SETUP_APP_USER="SYS"
           export SETUP_APP_USER_PASSWORD="foo"
           EXIT_CODE=$(./setup-oracledb.sh)
-          exit ${EXIT_CODE} != 0
+          exit eval ${EXIT_CODE} != 0
