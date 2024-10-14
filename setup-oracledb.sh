@@ -177,7 +177,7 @@ echo "::endgroup::"
 
 ###############################################################################
 echo "::group::⏰ Waiting for database to be ready"
-DB_IS_UP=1
+DB_IS_UP=""
 EXIT_VALUE=0
 
 for ((COUNTER=1; COUNTER <= HEALTH_MAX_RETRIES; COUNTER++))
@@ -193,7 +193,9 @@ done
 if [ "${DB_IS_UP}" = "yes" ]; then
     echo "✅ Database is ready!"
 else
-    echo "❌ Database failed to start on time"
+    echo "❌ Database failed to start on time."
+    echo "🔎 Container logs:"
+    "${CONTAINER_RUNTIME}" logs "${CONTAINER_NAME}"
     EXIT_VALUE=1
 fi
 
