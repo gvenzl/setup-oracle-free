@@ -1,6 +1,6 @@
 #!/bin/bash
 # Since: January, 2023
-# Author: aalmiray
+# Author: aalmiray, gvenzl
 #
 # Copyright 2023 Andres Almiray, Gerald Venzl
 #
@@ -63,6 +63,9 @@ echo "✅ tag set to ${SETUP_TAG}"
 CONTAINER_IMAGE="gvenzl/oracle-free:${SETUP_TAG}"
 
 # PORT
+if [ -z "${SETUP_PORT}"]; then
+  echo "☑️️ container host port set to 1521 (default)"
+fi;
 echo "✅ port set to ${SETUP_PORT}"
 CONTAINER_ARGS="-p 1521:${SETUP_PORT}"
 
