@@ -1,6 +1,6 @@
 #!/bin/bash
 # Since: January, 2023
-# Author: aalmiray
+# Author: aalmiray, gvenzl
 #
 # Copyright 2023-2024 Andres Almiray, Gerald Venzl
 #
@@ -63,6 +63,10 @@ echo "✅ tag set to ${SETUP_TAG}"
 CONTAINER_IMAGE="gvenzl/oracle-free:${SETUP_TAG}"
 
 # PORT
+if [ -z "${SETUP_PORT}"]; then
+  echo "☑️️ container host port set to 1521 (default)"
+  SETUP_PORT=1521
+fi;
 echo "✅ port set to ${SETUP_PORT}"
 CONTAINER_ARGS="-p 1521:${SETUP_PORT}"
 
@@ -177,7 +181,7 @@ echo "::endgroup::"
 
 ###############################################################################
 echo "::group::⏰ Waiting for database to be ready"
-DB_IS_UP=1
+DB_IS_UP=""
 EXIT_VALUE=0
 
 for ((COUNTER=1; COUNTER <= HEALTH_MAX_RETRIES; COUNTER++))
@@ -190,10 +194,15 @@ do
     fi
 done
 
+echo "::endgroup::"
+# Start a new group so that database readiness or failure is visible in actions.
+
 if [ "${DB_IS_UP}" = "yes" ]; then
-    echo "✅ Database is ready!"
+    echo "::group::✅ Database is ready!"
 else
-    echo "❌ Database failed to start on time"
+    echo "::group::❌ Database failed to start on time."
+    echo "🔎 Container logs:"
+    "${CONTAINER_RUNTIME}" logs "${CONTAINER_NAME}"
     EXIT_VALUE=1
 fi
 
