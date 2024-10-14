@@ -50,4 +50,5 @@ jobs:
           export SETUP_HEALTH_MAX_RETRIES=10
           export SETUP_APP_USER="SYS"
           export SETUP_APP_USER_PASSWORD="foo"
-          ./setup-oracledb.sh
+          EXIT_CODE=$(./setup-oracledb.sh)
+          exit ${EXIT_CODE} != 0
