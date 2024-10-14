@@ -50,5 +50,6 @@ jobs:
           export SETUP_HEALTH_MAX_RETRIES=10
           export SETUP_APP_USER="SYS"
           export SETUP_APP_USER_PASSWORD="foo"
-          EXIT_CODE=$(./setup-oracledb.sh)
-          exit eval ${EXIT_CODE} != 0
+          # Negative test: setup is expected to fail
+          #   If it fails, return 0 (success), if it succeeds, return 1 (failure)
+          ./setup-oracledb.sh && exit 1 || exit 0
