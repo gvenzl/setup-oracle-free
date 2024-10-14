@@ -65,6 +65,7 @@ CONTAINER_IMAGE="gvenzl/oracle-free:${SETUP_TAG}"
 # PORT
 if [ -z "${SETUP_PORT}"]; then
   echo "☑️️ container host port set to 1521 (default)"
+  SETUP_PORT=1521
 fi;
 echo "✅ port set to ${SETUP_PORT}"
 CONTAINER_ARGS="-p 1521:${SETUP_PORT}"
