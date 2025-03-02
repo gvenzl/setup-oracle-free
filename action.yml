@@ -65,6 +65,10 @@ inputs:
     description: 'Additional database initialization scripts.'
     required: false
 
+  container-network:
+    description: 'Connects the container to an already established network.'
+    required: false
+
 runs:
   using: 'composite'
   steps:
@@ -72,7 +76,7 @@ runs:
       if: runner.os != 'Linux'
       shell: bash
       run: |
-        echo "::error:: Only Linux runners are supported at the moment"
+        echo "::error:: Only Linux runners are supported at the moment."
         exit 1
 
     - name: Setup database
@@ -93,3 +97,4 @@ runs:
         SETUP_APP_USER_PASSWORD: ${{ inputs.app-user-password }}
         SETUP_SETUP_SCRIPTS: ${{ inputs.setup-scripts }}
         SETUP_STARTUP_SCRIPTS: ${{ inputs.startup-scripts }}
+        SETUP_CONTAINER_NETWORK: ${{ inputs.container-network }}

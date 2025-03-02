@@ -63,12 +63,12 @@ echo "✅ tag set to ${SETUP_TAG}"
 CONTAINER_IMAGE="gvenzl/oracle-free:${SETUP_TAG}"
 
 # PORT
-if [ -z "${SETUP_PORT}"]; then
+if [ -z "${SETUP_PORT}" ]; then
   echo "☑️️ container host port set to 1521 (default)"
   SETUP_PORT=1521
-fi;
+fi
 echo "✅ port set to ${SETUP_PORT}"
-CONTAINER_ARGS="-p 1521:${SETUP_PORT}"
+CONTAINER_ARGS="${CONTAINER_ARGS} -p 1521:${SETUP_PORT}"
 
 # CONTAINER_NAME
 if [ -n "${SETUP_CONTAINER_NAME}" ]; then
@@ -79,6 +79,13 @@ else
     CONTAINER_NAME=${DEFAULT_CONTAINER_NAME}
 fi
 CONTAINER_ARGS="${CONTAINER_ARGS} --name ${CONTAINER_NAME}"
+
+
+# Container network
+if [ -n "${SETUP_CONTAINER_NETWORK}" ]; then
+    echo "✅ container network set to ${SETUP_CONTAINER_NETWORK}"
+    CONTAINER_ARGS="${CONTAINER_ARGS} --network ${SETUP_CONTAINER_NETWORK}"
+fi
 
 # HEALTH_MAX_RETRIES
 if [ -n "${SETUP_HEALTH_MAX_RETRIES}" ]; then
