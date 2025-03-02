@@ -53,3 +53,16 @@ jobs:
           # Negative test: setup is expected to fail
           #   If it fails, return 0 (success), if it succeeds, return 1 (failure)
           ./setup-oracledb.sh && exit 1 || exit 0
+
+  test-with-container-network:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Invoke script
+        run: |
+          podman network create test-network
+          export SETUP_CONTAINER_NETWORK="test-network"
+          export SETUP_HEALTH_MAX_RETRIES=10
+          export SETUP_APP_USER="TEST"
+          export SETUP_APP_USER_PASSWORD="LetsTest1"
+          ./setup-oracledb.sh
